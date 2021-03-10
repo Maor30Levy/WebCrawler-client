@@ -1,0 +1,23 @@
+.none{
+    display: none;
+}
+
+#container{
+    display: flex;
+}
+#form{
+    width: 100vw;
+    display: flex;
+    justify-content: space-between;
+}
+input{width: 100%;}
+.on{
+
+    display: flex;
+    cursor: pointer;
+    height: 100px;
+    width: 200px;
+}
+.alert_on{
+    display: inline;
+}
