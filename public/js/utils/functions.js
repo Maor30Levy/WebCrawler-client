@@ -98,9 +98,10 @@ export const processTree = async (tree, q) => {
         const node = getNodeByID(q.dequeue().id, tree);
         const nodeChildren = node.children;
         nodeChildren.forEach(child => {
-            const node = document.getElementById(child.id)
-            if (!node) q.enqueue(child.value, child.level, child.id);
+
+            q.enqueue(child.value, child.level, child.id);
         });
+        const elementNode = document.getElementById(node.id)
         parseNode(node);
     }
 };

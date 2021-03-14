@@ -44,10 +44,10 @@ form.addEventListener('submit', async (event) => {
                 }
             }
             const q = new Queue();
-            let tree = await result.json();
+            tree = await result.json();
             if (tree.root) await processTree(tree, q);
-            while (!tree.completed) {
-                await setInterval(async () => {
+            const stream = async () => {
+                try {
                     result = await fetch(`${serverHost}/stream`, {
                         method: 'POST',
                         headers: {
@@ -62,15 +62,22 @@ form.addEventListener('submit', async (event) => {
                         }
                     }
                     tree = await result.json();
-                    if (tree.root) await processTree(tree, q);
-                    console.log(tree.completed)
-                }, 3000).promise();
-            }
+                    if (tree.completed) await processTree(tree, q);
+                    console.log(tree?.numOfNodes);
+                    if (!tree.completed) setTimeout(stream, 2000)
+
+                } catch (err) {
+                    console.log(err)
+                }
+
+            };
+            setTimeout(stream, 2000);
         }
     } catch (err) {
         console.log(err.message);
     }
 });
+
 
 
 
