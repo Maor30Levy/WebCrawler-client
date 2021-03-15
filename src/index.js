@@ -2,14 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const hbs = require('hbs');
 const path = require('path');
-const { getKeys } = require('./keys/keys');
 const initServer = async () => {
     try {
         if (process.env.PORT) {
             await require('./keys/setKeys').setKeys();
         }
-        const keys = await getKeys();
-        const port = keys.port | 3000;
+        const keys = require('./keys/keys');
+        const port = keys.port;
         const app = express();
         const checkURLRouter = require('./router/checkUrlRouter');
         const publicDirectory = path.join(__dirname, '../public');
