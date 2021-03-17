@@ -62,8 +62,7 @@ form.addEventListener('submit', async (event) => {
                         }
                     }
                     tree = await result.json();
-                    if (tree.completed) await processTree(tree, q);
-                    console.log(tree?.numOfNodes);
+                    await processTree(tree, q);
                     if (!tree.completed) setTimeout(stream, 2000)
 
                 } catch (err) {
@@ -71,7 +70,7 @@ form.addEventListener('submit', async (event) => {
                 }
 
             };
-            setTimeout(stream, 2000);
+            if (!tree.completed) setTimeout(stream, 2000);
         }
     } catch (err) {
         console.log(err.message);

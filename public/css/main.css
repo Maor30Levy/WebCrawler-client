@@ -11,8 +11,7 @@
     justify-content: space-between;
 }
 input{width: 100%;}
-.on{
-
+li{
     display: flex;
     cursor: pointer;
     height: 100px;

@@ -7,20 +7,17 @@ export const parseNode = (node) => {
     for (let child of node.children) {
         const childElement = document.createElement('li');
         childElement.id = child.id;
-        childElement.innerText = child.title;
-        childElement.className = 'on';
-
         childrenList.appendChild(childElement);
     }
+    childrenList.classList = (parseInt(node.nodeLevel)) > 1 ? 'none' : 'on';
     element.appendChild(childrenList);
     element.addEventListener('click', (event) => {
-        const list = element.children[0].children;
-        for (let child of list) {
-            child.classList.toggle('on');
-            child.classList.toggle('none');
-        }
-        event.stopPropagation();
-
+        const ul = element.children[0];
+        ul.classList.toggle('on');
+        ul.classList.toggle('none');
+        if (event.target.children[0].className === 'on') shutSiblingsChildren(event.target.children[0]);
+        if (ul.className === 'on')
+            event.stopPropagation();
     });
 
 }
@@ -93,16 +90,29 @@ export const deletePreviousQuery = () => {
 };
 
 export const processTree = async (tree, q) => {
-    q.enqueue(tree.root, 1, tree.root.id);
-    while (q.size > 0) {
+    const maxPages = tree.maxPages;
+    let numOfNodesParsed = (document.getElementsByTagName('ul').length) - 1;
+    q.enqueue(tree.root.title, 1, '0');
+    while (q.size > 0 && numOfNodesParsed < maxPages) {
         const node = getNodeByID(q.dequeue().id, tree);
         const nodeChildren = node.children;
         nodeChildren.forEach(child => {
-
-            q.enqueue(child.value, child.level, child.id);
+            if (child.title !== '') q.enqueue(child.title, child.level, child.id);
         });
-        const elementNode = document.getElementById(node.id)
-        parseNode(node);
+        const elementNode = document.getElementById(node.id);
+        if (elementNode && !elementNode.firstChild) {
+            parseNode(node);
+            numOfNodesParsed++;
+        }
+
     }
 };
 
+const shutSiblingsChildren = (element) => {
+    const siblings = element.parentElement.parentElement.children;
+    for (let sibling of siblings) {
+        if (sibling.id === element.parentElement.id) continue;
+        if (sibling.children[0])
+            sibling.children[0].className = 'none';
+    }
+};
