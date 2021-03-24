@@ -1,4 +1,4 @@
-import { processTree, checkInput, deletePreviousQuery } from './utils/functions.js';
+import { processTree, checkInput, deletePreviousQuery, updateStatusBar } from './utils/functions.js';
 import { Queue } from './utils/queue.js';
 
 
@@ -62,7 +62,12 @@ form.addEventListener('submit', async (event) => {
                         }
                     }
                     tree = await result.json();
-                    await processTree(tree, q);
+                    if (tree.root) {
+                        document.getElementById('status-bar').className = 'status_bar';
+                        updateStatusBar(tree);
+                        await processTree(tree, q);
+                    }
+
                     if (!tree.completed) setTimeout(stream, 2000)
 
                 } catch (err) {

@@ -11,12 +11,17 @@
 <body>
     <div id='server-host' class="none">{{serverHost}}</div>
     <form id='form'>
-        <label >URL<input type="text" id='url'><div id='url-validation-alert' class="none">Invalid URL</div></label>
-        <label >Max Level<input type="number" id='max-level'><div id='level-validation-alert' class="none">Invalid limitation for max level</div></label></label>
-        <label >Max Pages<input type="number" id='max-pages'><div id='pages-validation-alert' class="none">Invalid limitation for max pages</div></label></label>
+        <label >URL  <input type="text" id='url'><div id='url-validation-alert' class="none">Invalid URL</div></label>
+        <label >Max Level  <input type="number" id='max-level'><div id='level-validation-alert' class="none">Invalid limitation for max level</div></label></label>
+        <label >Max Pages  <input type="number" id='max-pages'><div id='pages-validation-alert' class="none">Invalid limitation for max pages</div></label></label>
         <button id="send">Send Query</button>
     </form>
-    <ul id="container">
+    <div id='status-bar' class="none">
+        <div id='pages-bar'></div>
+        <div id='page-status'></div>
+        <div id='level-bar'></div>
+    </div>
+    <ul id="container" class="tree">
         <li id='0' class="on">
 
         </li>

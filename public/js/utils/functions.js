@@ -1,23 +1,36 @@
 import { Queue } from './queue.js';
 
 export const parseNode = (node) => {
+    const level = parseInt(node.nodeLevel);
     const element = document.getElementById(node.id);
-    element.innerText = node.title;
+    const aElement = document.createElement('a');
+    aElement.className = `level${level % 5}`
+    const label = document.createElement('label');
+    label.setAttribute('for', node.id);
+    label.innerText = (node.title).trim();
+    const input = document.createElement('input');
+    input.setAttribute('checked', "");
+    input.setAttribute('value', "");
+    input.type = 'checkbox';
+    aElement.appendChild(label);
+    aElement.appendChild(input);
+    element.appendChild(aElement);
     const childrenList = document.createElement('ul');
     for (let child of node.children) {
         const childElement = document.createElement('li');
         childElement.id = child.id;
         childrenList.appendChild(childElement);
     }
-    childrenList.classList = (parseInt(node.nodeLevel)) > 1 ? 'none' : 'on';
+    childrenList.classList = level > 1 ? `none` : `on`;
     element.appendChild(childrenList);
-    element.addEventListener('click', (event) => {
-        const ul = element.children[0];
+    aElement.addEventListener('click', (event) => {
+        // document.getElementById('0').tagName
+        const caseA = event.target.parentElement.children[1];
+        const caseLabel = event.target.parentElement.parentElement.children[1];
+        const ul = event.target.tagName === 'A' ? caseA : caseLabel;
         ul.classList.toggle('on');
         ul.classList.toggle('none');
-        if (event.target.children[0].className === 'on') shutSiblingsChildren(event.target.children[0]);
-        if (ul.className === 'on')
-            event.stopPropagation();
+        event.stopPropagation();
     });
 
 }
@@ -112,7 +125,36 @@ const shutSiblingsChildren = (element) => {
     const siblings = element.parentElement.parentElement.children;
     for (let sibling of siblings) {
         if (sibling.id === element.parentElement.id) continue;
-        if (sibling.children[0])
-            sibling.children[0].className = 'none';
+        if (sibling.children[1])
+            sibling.children[1].className = 'none';
     }
+};
+
+export const updateStatusBar = (tree) => {
+    const pagesBar = document.getElementById('pages-bar');
+    cleanBar(pagesBar);
+    const pageStatus = document.getElementById('page-status');
+    const levelBar = document.getElementById('level-bar');
+    const minPages = Math.min(tree.numOfNodes, tree.maxPages);
+    updatePagesBar(pagesBar, minPages, tree.maxPages);
+    pageStatus.innerText = `${minPages} pages out of ${tree.maxPages} completed!`;
+    levelBar.innerText = `Level ${tree.levelsRecorded[tree.levelsRecorded.length - 1]} out of ${tree.maxLevel} completed!`;
+
+}
+const cleanBar = (pagesBarElement) => {
+    while (pagesBarElement.firstElementChild) {
+        pagesBarElement.removeChild(pagesBarElement.lastElementChild)
+    }
+}
+const updatePagesBar = (pagesBarElement, numOfPages, maxPages) => {
+    const pagesBar = document.getElementById('pages-bar');
+    const barContainer = document.createElement('div');
+    barContainer.id = 'bar-container';
+    barContainer.className = 'bar_container';
+    for (let i = 0; i < maxPages; i++) {
+        const bar = document.createElement('div');
+        bar.className = i < numOfPages ? 'completed_bar' : 'incompleted_bar';
+        barContainer.appendChild(bar);
+    }
+    pagesBar.appendChild(barContainer);
 };
