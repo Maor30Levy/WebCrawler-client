@@ -2,9 +2,15 @@ const express = require('express');
 const cors = require('cors');
 const hbs = require('hbs');
 const path = require('path');
+const { createProxyMiddleware } = require('http-proxy-middleware');
+
 
 const port = process.env.PORT;
 const serverHost = process.env.SERVER_HOST;
+const serverPort = process.env.PORT;
+
+
+
 
 const app = express();
 const checkURLRouter = require('./router/checkUrlRouter');
@@ -20,6 +26,14 @@ const partialsPath = path.join(__dirname, "../templates/partials");
 app.set('view engine', 'hbs');
 app.set('views', viewsPath);
 hbs.registerPartials(partialsPath);
+
+app.use("/serverHost", createProxyMiddleware({
+    target: `${serverHost}:${serverPort}`,
+    changeOrigin: true,
+    pathRewrite: {
+        '^serverHost': ""
+    }
+}));
 
 app.get('', (req, res) => {
     res.render('index', {

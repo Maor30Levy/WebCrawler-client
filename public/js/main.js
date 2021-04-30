@@ -30,7 +30,7 @@ form.addEventListener('submit', async (event) => {
         const validInput = await checkInput(url, parseInt(maxLevel), parseInt(maxPages));
         if (validInput) {
             const request = { url, maxLevel, maxPages };
-            let result = await fetch(`/api/newQuery`, {
+            let result = await fetch(`serverHost/newQuery`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -48,7 +48,7 @@ form.addEventListener('submit', async (event) => {
             if (tree.root) await processTree(tree, q);
             const stream = async () => {
                 try {
-                    result = await fetch(`/api/stream`, {
+                    result = await fetch(`serverHost/stream`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
