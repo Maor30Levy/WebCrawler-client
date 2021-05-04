@@ -1,10 +1,6 @@
 import { processTree, checkInput, deletePreviousQuery, updateStatusBar } from './utils/functions.js';
 import { Queue } from './utils/queue.js';
 
-
-const serverHost = document.getElementById('server-host').innerText;
-
-let tree;
 const urlElement = document.getElementById('url');
 const maxLevelElement = document.getElementById('max-level');
 const maxPagesElement = document.getElementById('max-pages');
@@ -30,12 +26,12 @@ form.addEventListener('submit', async (event) => {
         const validInput = await checkInput(url, parseInt(maxLevel), parseInt(maxPages));
         if (validInput) {
             const request = { url, maxLevel, maxPages };
-            let result = await fetch(`serverHost/newQuery`, {
+            let result = await fetch('/server', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(request)
+                body: JSON.stringify({ route: 'newQuery', request })
             });
             if (!result.ok) {
                 throw {
@@ -44,16 +40,16 @@ form.addEventListener('submit', async (event) => {
                 }
             }
             const q = new Queue();
-            tree = await result.json();
+            let tree = await result.json();
             if (tree.root) await processTree(tree, q);
             const stream = async () => {
                 try {
-                    result = await fetch(`serverHost/stream`, {
+                    result = await fetch('/server', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify(request)
+                        body: JSON.stringify({ route: 'stream', request })
                     });
                     if (!result.ok) {
                         throw {

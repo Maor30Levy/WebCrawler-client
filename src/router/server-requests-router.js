@@ -1,12 +1,14 @@
 const express = require('express');
 const router = new express.Router();
 const axios = require('axios');
+const { keys } = require('../keys/keys');
 
-router.post('/check-url', async (req, res) => {
+router.post('/server', async (req, res) => {
     try {
-        const url = req.body.url
-        const result = await axios.get(url);
-        return res.sendStatus(result.status);
+        const serverURL = `http://${keys.serverHost}:${keys.serverPort}/${req.body.route}`;
+        const request = req.body.request;
+        const result = await axios.post(serverURL, request);
+        return res.send(result.data)
     } catch (err) {
         console.log(err.message);
         if (err.response?.status) {

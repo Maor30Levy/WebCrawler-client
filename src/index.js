@@ -2,18 +2,13 @@ const express = require('express');
 const cors = require('cors');
 const hbs = require('hbs');
 const path = require('path');
-const { createProxyMiddleware } = require('http-proxy-middleware');
+const { keys } = require('./keys/keys');
 
-
-const port = process.env.PORT;
-const serverHost = process.env.SERVER_HOST;
-const serverPort = process.env.PORT;
-
-
-
+const port = keys.port;
 
 const app = express();
 const checkURLRouter = require('./router/checkUrlRouter');
+const serverRouter = require('./router/server-requests-router');
 const publicDirectory = path.join(__dirname, '../public');
 
 
@@ -27,21 +22,12 @@ app.set('view engine', 'hbs');
 app.set('views', viewsPath);
 hbs.registerPartials(partialsPath);
 
-app.use("/serverHost", createProxyMiddleware({
-    target: `${serverHost}:${serverPort}`,
-    changeOrigin: true,
-    pathRewrite: {
-        '^serverHost': ""
-    }
-}));
-
 app.get('', (req, res) => {
-    res.render('index', {
-        serverHost: serverHost
-    });
+    res.render('index');
 });
 
 app.use(checkURLRouter);
+app.use(serverRouter);
 
 app.listen(port, () => {
     console.log(`Server is up on port ${port}!`);
